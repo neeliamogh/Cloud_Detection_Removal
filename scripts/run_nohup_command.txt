@@ -1,0 +1,8 @@
+cd /teamspace/studios/this_studio
+unzip cloud_removal_india.zip
+cd cloud_removal_india
+chmod +x scripts/*.sh
+bash scripts/setup_lightning.sh
+nohup bash scripts/run_full_pipeline.sh > logs/full_pipeline.log 2>&1 &
+tail -f logs/full_pipeline.log
+

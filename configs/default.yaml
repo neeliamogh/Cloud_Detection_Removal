@@ -1,0 +1,79 @@
+project:
+  name: cloud_removal_india
+  seed: 42
+  root: /teamspace/studios/this_studio/cloud_removal_india
+
+paths:
+  data_root: /teamspace/studios/this_studio/cloud_removal_india/data
+  raw_dir: /teamspace/studios/this_studio/cloud_removal_india/data/raw
+  patch_dir: /teamspace/studios/this_studio/cloud_removal_india/data/patches
+  split_dir: /teamspace/studios/this_studio/cloud_removal_india/data/splits
+  model_dir: /teamspace/studios/this_studio/cloud_removal_india/models
+  result_dir: /teamspace/studios/this_studio/cloud_removal_india/results
+  log_dir: /teamspace/studios/this_studio/cloud_removal_india/logs
+
+data:
+  # Tuned for a complete download-to-results run within about 4 hours on one L40S.
+  patch_size: 160
+  patch_bbox_degrees: 0.045
+  patch_attempts_per_scene: 3
+  samples_per_regime: 150
+  min_total_samples: 50
+  max_scenes_per_regime: 300
+  cloudy_min_fraction: 0.005
+  cloudy_max_fraction: 0.95
+  clear_max_fraction: 0.20
+  max_temporal_gap_days: 60
+  sentinel2_bands: [B02, B03, B04, B08, B11, B12]
+  sentinel1_bands: [vv, vh]
+  cloud_scl_classes: [3, 8, 9, 10]
+  normalize_percentiles: [1, 99]
+
+regimes:
+  himalayas:
+    bbox: [76.0, 31.0, 78.5, 33.5]
+  indo_gangetic_plain:
+    bbox: [77.0, 27.5, 81.5, 29.5]
+  western_ghats:
+    bbox: [73.0, 10.0, 76.0, 14.5]
+  northeast_india:
+    bbox: [91.0, 24.0, 95.5, 27.5]
+  deccan_plateau:
+    bbox: [76.0, 15.0, 80.0, 18.5]
+  thar_desert:
+    bbox: [69.5, 25.0, 73.5, 28.5]
+  coastal_india:
+    bbox: [80.0, 12.0, 82.5, 16.0]
+  urban_ncr:
+    bbox: [76.6, 28.2, 77.6, 29.0]
+
+dates:
+  start: "2022-01-01"
+  end: "2025-12-31"
+
+training:
+  device: cuda
+  precision: amp
+  num_workers: 4
+  detector:
+    epochs: 30
+    batch_size: 32
+    lr: 0.0003
+    scheduler: cosine
+    encoder: resnet34
+  remover:
+    epochs: 50
+    batch_size: 24
+    lr: 0.0002
+    scheduler: cosine
+    lambda_l1: 1.0
+    lambda_ssim: 0.25
+    lambda_sam: 0.10
+    lambda_cloud: 4.0
+
+validation:
+  holdout_regimes: [northeast_india, thar_desert]
+  external:
+    enable_sen12mscr: false
+    enable_cloudsen12: false
+    enable_sparcs: false

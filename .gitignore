@@ -1,0 +1,37 @@
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Credentials
+.env
+.env.*
+!.env.example
+*credentials*.json
+
+# Logs
+logs/
+*.log
+
+# Datasets and model weights
+/data/
+/models/
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.safetensors
+
+# Generated results
+results/
+
+# Temporary files
+*.tmp
+*.bak
+.DS_Store
+
+# Editor settings
+.vscode/
